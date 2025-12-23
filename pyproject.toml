@@ -1,0 +1,5 @@
+[project]
+name = "wizpr-suite"
+version = "0.1.0"
+description = "BLE wearable + LLM suite (OpenAI, Ollama, llama.cpp)."
+requires-python = ">=3.10"
