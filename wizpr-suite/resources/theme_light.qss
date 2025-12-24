@@ -1,0 +1,28 @@
+/* Light theme */
+QWidget { font-family: "Segoe UI"; font-size: 10.5pt; color: #1B1F2A; background: #F6F7FB; }
+QGroupBox { border: 1px solid #D0D4DA; border-radius: 12px; margin-top: 12px; padding: 10px; background: white; }
+QGroupBox::title { subcontrol-origin: margin; left: 12px; padding: 0 6px; color: #2A3342; }
+QLineEdit, QPlainTextEdit, QTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+  background: white; border: 1px solid #D0D4DA; border-radius: 10px; padding: 6px;
+}
+QPushButton {
+  background: white; border: 1px solid #D0D4DA; border-radius: 10px; padding: 7px 10px;
+}
+QPushButton:hover { background: #EFF2F8; }
+QPushButton:pressed { background: #E6ECF6; }
+QTabWidget::pane { border: 1px solid #D0D4DA; border-radius: 12px; padding: 4px; background: white; }
+QTabBar::tab { background: #EEF1F7; border: 1px solid #D0D4DA; padding: 8px 12px; border-top-left-radius: 10px; border-top-right-radius: 10px; margin-right: 4px; }
+QTabBar::tab:selected { background: white; }
+QStatusBar { background: #EEF1F7; border-top: 1px solid #D0D4DA; }
+QTableWidget { background: white; border: 1px solid #D0D4DA; border-radius: 10px; gridline-color: #D0D4DA; }
+QHeaderView::section { background: #EEF1F7; border: 1px solid #D0D4DA; padding: 6px; }
+QAbstractSpinBox { padding-right: 26px; min-height: 28px; }
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
+  subcontrol-origin: border;
+  width: 22px;
+  border-left: 1px solid #D0D4DA;
+  background: white;
+}
+QAbstractSpinBox::up-button { subcontrol-position: top right; border-top-right-radius: 10px; }
+QAbstractSpinBox::down-button { subcontrol-position: bottom right; border-bottom-right-radius: 10px; }
+QAbstractSpinBox::up-arrow, QAbstractSpinBox::down-arrow { width: 9px; height: 9px; }
