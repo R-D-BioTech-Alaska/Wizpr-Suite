@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/wizpr_suite_logo.png" alt="Wizpr Suite" width="160" />
+  <img src="docs/images/wizpr_suite_logo.png" alt="Wizpr Suite"/>
 </p>
 
 <p align="center">
