@@ -1,13 +1,14 @@
+<div align="center">
+  <h1>Wizpr Suite</h1>
+</div>
 <p align="center">
-  <img src="docs/images/wizpr_suite_logo.png" alt="Wizpr Suite"/>
+  <img src="docs/images/wizpr_suite_logo.png"/>
 </p>
 
 <p align="center">
   <b>BLE wearable control plane + multi-LLM desktop suite (Windows-first)</b><br/>
   Turn ring button / proximity / voice events into actions across OpenAI, Ollama, and local LLM servers.
 </p>
-
-# Wizpr Suite
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](#installation)
 ![Platform](https://img.shields.io/badge/platform-Windows-informational)
