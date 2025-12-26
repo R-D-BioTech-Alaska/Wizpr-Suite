@@ -10,6 +10,8 @@
   Turn ring button / proximity / voice events into actions across OpenAI, Ollama, and local LLM servers.
 </p>
 
+***12/25/2025 - Executable released
+
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](#installation)
 ![Platform](https://img.shields.io/badge/platform-Windows-informational)
 ![UI](https://img.shields.io/badge/UI-PySide6-success)
