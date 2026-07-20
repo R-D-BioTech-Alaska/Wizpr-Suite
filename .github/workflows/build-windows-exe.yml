@@ -1,0 +1,41 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.11 x64
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          architecture: "x64"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            build-requirements.txt
+
+      - name: Build and self-test executable
+        shell: pwsh
+        run: .\build_windows_exe.ps1 -KeepBuildEnvironment
+
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v6
+        with:
+          name: Wizpr-Suite-Windows-x64
+          path: dist/WizprSuite.exe
+          if-no-files-found: error
+          retention-days: 30
