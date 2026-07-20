@@ -1,11 +1,11 @@
-PySide6>=6.7.0
+PySide6-Essentials==6.8.3
 bleak>=0.22.3
-pydantic>=2.7.0
-pydantic-settings>=2.3.0
+winrt-Windows.Devices.Bluetooth>=3.2.1; sys_platform == "win32"
+winrt-Windows.Devices.Enumeration>=3.2.1; sys_platform == "win32"
+winrt-Windows.Devices.Radios>=3.2.1; sys_platform == "win32"
 httpx>=0.27.0
 fastapi>=0.111.0
 uvicorn>=0.30.0
-python-dotenv>=1.0.1
 openai>=1.40.0
-sounddevice>=0.4.7
-numpy>=1.26.0
+faster-whisper>=1.0.0
+numpy==1.26.4

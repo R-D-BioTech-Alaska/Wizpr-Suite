@@ -1,5 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "wizpr-suite"
-version = "0.1.0"
+version = "2.0.2"
 description = "BLE wearable + LLM suite (OpenAI, Ollama, llama.cpp)."
 requires-python = ">=3.10"
+dependencies = [
+    "PySide6-Essentials==6.8.3",
+    "bleak>=0.22.3",
+    "winrt-Windows.Devices.Bluetooth>=3.2.1; sys_platform == 'win32'",
+    "winrt-Windows.Devices.Enumeration>=3.2.1; sys_platform == 'win32'",
+    "winrt-Windows.Devices.Radios>=3.2.1; sys_platform == 'win32'",
+    "httpx>=0.27.0",
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "openai>=1.40.0",
+    "faster-whisper>=1.0.0",
+    "numpy==1.26.4",
+]
+
+[project.scripts]
+wizpr-suite = "wizpr_suite.app.main:main"
+
+[tool.setuptools.packages.find]
+include = ["wizpr_suite*"]
+
+[tool.setuptools.package-data]
+wizpr_suite = ["resources/*.qss", "resources/*.png"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

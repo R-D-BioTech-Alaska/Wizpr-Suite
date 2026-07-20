@@ -1,0 +1,8 @@
+setuptools==80.8.0
+pyinstaller==6.12.0
+pyinstaller-hooks-contrib==2025.2
+altgraph==0.17.4
+pefile==2023.2.7; sys_platform == "win32"
+pywin32-ctypes==0.2.3; sys_platform == "win32"
+pytest==8.4.2
+ruff==0.15.22
