@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Protocol, Any
+from typing import Any, Protocol
 
 
+@dataclass
 class LLMResponse:
     text: str
     raw: Any = None
@@ -20,4 +22,10 @@ class LLMProvider(Protocol):
         ...
 
     async def generate(self, prompt: str, model: str, temperature: float = 0.7) -> LLMResponse:
+        ...
+
+    def stream_generate(self, prompt: str, model: str, temperature: float = 0.7) -> AsyncIterator[str]:
+        ...
+
+    async def close(self) -> None:
         ...

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import asyncio
-from dataclasses import dataclass
 from typing import Awaitable, Callable, Any, DefaultDict
 from collections import defaultdict
 
+from .logging_setup import get_logger
+
 
 Handler = Callable[[Any], Awaitable[None]]
+logger = get_logger("wizpr_suite.events")
 
 
 class EventBus:
@@ -23,5 +24,5 @@ class EventBus:
             try:
                 await h(payload)
             except Exception:
-                # isolate failures hopefully
+                logger.exception("Event handler failed for topic %s", topic)
                 continue
