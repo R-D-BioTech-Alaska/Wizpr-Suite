@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import time
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -11,12 +12,10 @@ _MEMORY_FILE = "memory.json"
 _REMEMBER_RE = re.compile(r"^\s*(?:please\s+)?remember(?:\s+that)?\s+(.+?)\s*$", re.IGNORECASE | re.DOTALL)
 _FORGET_RE = re.compile(r"^\s*(?:please\s+)?forget(?:\s+that)?\s+(.+?)\s*$", re.IGNORECASE | re.DOTALL)
 
-
 @dataclass(frozen=True)
 class MemoryStats:
     facts: int
     turns: int
-
 
 class PersistentMemory:
     def __init__(self, app_dir: Path) -> None:
@@ -59,7 +58,6 @@ class PersistentMemory:
         temp.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         temp.replace(self.path)
 
-    @staticmethod
     def _normalized(text: str) -> str:
         return " ".join((text or "").strip().casefold().split())
 
