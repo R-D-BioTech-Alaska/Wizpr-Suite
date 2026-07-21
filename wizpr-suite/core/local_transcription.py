@@ -77,14 +77,11 @@ _NON_COMMAND_STARTS = (
     "transcription",
 )
 
-
 def _default_model_name() -> str:
     return os.environ.get("WIZPR_LOCAL_WHISPER_MODEL", "small.en").strip() or "small.en"
 
-
 def _default_compute_type() -> str:
     return os.environ.get("WIZPR_LOCAL_WHISPER_COMPUTE", "int8").strip() or "int8"
-
 
 def _env_timeout_seconds(name: str, default: str, minimum: float = 5.0) -> float:
     raw = os.environ.get(name, default).strip()
@@ -96,30 +93,24 @@ def _env_timeout_seconds(name: str, default: str, minimum: float = 5.0) -> float
         except ValueError:
             return minimum
 
-
 def _default_timeout_seconds() -> float:
     return _env_timeout_seconds("WIZPR_LOCAL_WHISPER_TIMEOUT", "90")
-
 
 def _default_request_timeout_seconds() -> float:
     default = os.environ.get("WIZPR_LOCAL_WHISPER_TIMEOUT", "12")
     return _env_timeout_seconds("WIZPR_LOCAL_WHISPER_REQUEST_TIMEOUT", default, minimum=3.0)
 
-
 def local_transcription_request_timeout_seconds() -> float:
     return _default_request_timeout_seconds()
-
 
 def local_transcription_uses_persistent_worker() -> bool:
     backend = os.environ.get("WIZPR_LOCAL_WHISPER_BACKEND", "server").strip().lower()
     return backend in {"server", "persistent", "warm"}
 
-
 def _transcription_worker_command(*args: str) -> list[str]:
     if getattr(sys, "frozen", False):
         return [sys.executable, "--local-transcribe-worker", *args]
     return [sys.executable, "-m", "wizpr_suite.tools.local_transcribe_worker", *args]
-
 
 def _default_beam_size() -> int:
     raw = os.environ.get("WIZPR_LOCAL_WHISPER_BEAM", "2").strip()
@@ -128,7 +119,6 @@ def _default_beam_size() -> int:
     except ValueError:
         return 2
 
-
 def _retry_beam_size() -> int:
     raw = os.environ.get("WIZPR_LOCAL_WHISPER_RETRY_BEAM", "5").strip()
     try:
@@ -136,13 +126,11 @@ def _retry_beam_size() -> int:
     except ValueError:
         return 5
 
-
 def _default_hotwords() -> str:
     raw = os.environ.get("WIZPR_LOCAL_WHISPER_HOTWORDS")
     if raw is not None:
         return " ".join(raw.split())
     return "WIZPR Wizpr Codex OpenCode Ollama Qwen"
-
 
 def _read_wav_float32(audio_path: Path) -> tuple[Any, int] | None:
     try:
@@ -181,7 +169,6 @@ def _read_wav_float32(audio_path: Path) -> tuple[Any, int] | None:
     if audio.size == 0:
         return None
     return audio.astype(np.float32), int(sample_rate or 16000)
-
 
 def _prepare_audio_input(audio_path: Path) -> object:
     loaded = _read_wav_float32(audio_path)
@@ -226,7 +213,6 @@ def _prepare_audio_input(audio_path: Path) -> object:
         audio = audio * (0.98 / peak)
     return np.clip(audio, -0.98, 0.98).astype(np.float32)
 
-
 def _frame_rms(audio: Any, frame: int, hop: int) -> Any:
     import numpy as np
 
@@ -240,7 +226,6 @@ def _frame_rms(audio: Any, frame: int, hop: int) -> Any:
     means = (cumulative[starts + frame] - cumulative[starts]) / float(frame)
     return np.sqrt(means).astype(np.float32)
 
-
 def _longest_true_run(mask: Any) -> int:
     import numpy as np
 
@@ -250,7 +235,6 @@ def _longest_true_run(mask: Any) -> int:
     false_positions = np.flatnonzero(~values)
     boundaries = np.concatenate((np.array([-1]), false_positions, np.array([values.size])))
     return int(np.max(np.diff(boundaries) - 1))
-
 
 def audio_preflight_reason(
     audio_path: Path,
@@ -322,7 +306,6 @@ def audio_preflight_reason(
             )
     return "", metrics
 
-
 def _speech_regions(audio: Any, sample_rate: int) -> list[tuple[int, int]]:
     try:
         import numpy as np
@@ -365,7 +348,6 @@ def _speech_regions(audio: Any, sample_rate: int) -> list[tuple[int, int]]:
     min_samples = int(sample_rate * 0.10)
     return [(start, end) for start, end in regions if end - start >= min_samples]
 
-
 def _select_speech_region(audio: Any, sample_rate: int) -> Any:
     try:
         import numpy as np
@@ -395,10 +377,8 @@ def _select_speech_region(audio: Any, sample_rate: int) -> Any:
         return audio
     return np.concatenate(selected).astype(np.float32, copy=False)
 
-
 def _trim_silence(audio: Any, sample_rate: int) -> Any:
     return _select_speech_region(audio, sample_rate)
-
 
 def _clean_transcript(text: str) -> str:
     cleaned = " ".join(text.strip().split())
@@ -432,7 +412,6 @@ def _clean_transcript(text: str) -> str:
     cleaned = re.sub(r"[-\u2013\u2014]\s*$", "", cleaned).strip()
     return cleaned
 
-
 def _reject_transcript_reason(text: str) -> str:
     norm = re.sub(r"[^a-z0-9\s']+", " ", text.casefold())
     norm = " ".join(norm.split())
@@ -455,14 +434,11 @@ def _reject_transcript_reason(text: str) -> str:
         return "Ignored filler-only transcript."
     return ""
 
-
 def clean_transcript(text: str) -> str:
     return _clean_transcript(text)
 
-
 def transcript_rejection_reason(text: str) -> str:
     return _reject_transcript_reason(text)
-
 
 def _float_attr(item: Any, name: str) -> float | None:
     try:
@@ -475,7 +451,6 @@ def _float_attr(item: Any, name: str) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
-
 
 def _segment_rejection_reason(segment: Any, *, relaxed: bool = False) -> str:
     text = str(getattr(segment, "text", "") or "").strip()
@@ -512,7 +487,6 @@ def _segment_rejection_reason(segment: Any, *, relaxed: bool = False) -> str:
         return "too short and speech probability is weak"
     return ""
 
-
 def _usable_segment_texts(segments: Any, *, relaxed: bool = False) -> tuple[list[str], int]:
     texts: list[str] = []
     rejected_count = 0
@@ -527,7 +501,6 @@ def _usable_segment_texts(segments: Any, *, relaxed: bool = False) -> tuple[list
             texts.append(text)
     return texts, rejected_count
 
-
 def _get_model(model_name: str, compute_type: str) -> object:
     os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
     warnings.filterwarnings("ignore", message="pkg_resources is deprecated as an API.*")
@@ -539,7 +512,6 @@ def _get_model(model_name: str, compute_type: str) -> object:
         model = WhisperModel(model_name, device="auto", compute_type=compute_type)
         _MODELS[key] = model
     return model
-
 
 def _transcribe_pass(model: object, audio: object, *, beam_size: int, relaxed: bool) -> tuple[str, int]:
     segments, _info = model.transcribe(
@@ -560,7 +532,6 @@ def _transcribe_pass(model: object, audio: object, *, beam_size: int, relaxed: b
     )
     segment_texts, rejected_segments = _usable_segment_texts(segments, relaxed=relaxed)
     return _clean_transcript(" ".join(segment_texts)), rejected_segments
-
 
 def _transcribe_sync(audio_path: Path, model_name: str, compute_type: str) -> str:
     model = _get_model(model_name, compute_type)
@@ -592,7 +563,6 @@ def _transcribe_sync(audio_path: Path, model_name: str, compute_type: str) -> st
         raise RuntimeError("Ignored low-confidence transcription.")
     raise RuntimeError("No clear speech detected.")
 
-
 def _extract_worker_payload(stdout: str) -> dict[str, Any] | None:
     for line in reversed(stdout.splitlines()):
         line = line.strip()
@@ -605,7 +575,6 @@ def _extract_worker_payload(stdout: str) -> dict[str, Any] | None:
         if isinstance(payload, dict):
             return payload
     return None
-
 
 async def _transcribe_in_subprocess(audio_path: Path, model_name: str, compute_type: str) -> tuple[str, str]:
     env = os.environ.copy()
@@ -661,7 +630,6 @@ async def _transcribe_in_subprocess(audio_path: Path, model_name: str, compute_t
     if proc.returncode != 0:
         return "", details or f"Local transcription worker exited with {proc.returncode}."
     return "", details or "Local transcription returned no text."
-
 
 class _PersistentTranscriptionWorker:
     def __init__(self) -> None:
@@ -875,13 +843,11 @@ class _PersistentTranscriptionWorker:
     def _stderr_tail(self) -> str:
         return "\n".join(self.stderr_lines[-5:]).strip()
 
-
 def _persistent_worker() -> _PersistentTranscriptionWorker:
     global _PERSISTENT_WORKER
     if _PERSISTENT_WORKER is None:
         _PERSISTENT_WORKER = _PersistentTranscriptionWorker()
     return _PERSISTENT_WORKER
-
 
 async def warm_local_transcriber(
     model_name: str | None = None,
@@ -894,12 +860,10 @@ async def warm_local_transcriber(
         return ""
     return await _persistent_worker().warm(model, compute)
 
-
 async def close_local_transcriber() -> None:
     worker = _PERSISTENT_WORKER
     if worker is not None:
         await worker.stop()
-
 
 async def transcribe_audio_local(
     audio_path: Path,
