@@ -266,7 +266,6 @@ class ConversationView(QtWidgets.QTextBrowser):
         if not self._render_timer.isActive():
             self._render_timer.start()
 
-    @staticmethod
     def _message_html(role: str, text: str) -> str:
         safe = html.escape(text).replace("\n", "<br>")
         if role == "user":
@@ -2548,7 +2547,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if next_label is not None:
             next_label.setText(self._next_step_text())
 
-    @staticmethod
     def _wake_phrase_config_for_target(target: str) -> tuple[str, str, str] | None:
         return {
             "assistant": ("assistant_wake_word", "Wizpr, Assistant", "Assistant Wake:"),
@@ -2629,7 +2627,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_quick_ready()
         self.statusBar().showMessage("Wake phrase saved.", 1500)
 
-    @staticmethod
     def _provider_label(pid: str) -> str:
         return {
             "openai": "OpenAI",
@@ -2691,7 +2688,6 @@ class MainWindow(QtWidgets.QMainWindow):
             }.get(self.active_llm_id, 0)
             tabs.setCurrentIndex(provider_idx)
 
-    @staticmethod
     def _set_combo_data(combo: QtWidgets.QComboBox | None, value: object, fallback: object) -> None:
         if combo is None:
             return
@@ -2704,7 +2700,6 @@ class MainWindow(QtWidgets.QMainWindow):
         finally:
             combo.blockSignals(False)
 
-    @staticmethod
     def _set_check(widget: QtWidgets.QCheckBox | None, checked: bool) -> None:
         if widget is None:
             return
@@ -3223,7 +3218,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if spin is None:
             return 60.0
         return max(1.0, float(spin.value()))
-
 
     def _scan_ble(self) -> None:
         self._ensure_advanced_ble_built()
@@ -4686,7 +4680,6 @@ class MainWindow(QtWidgets.QMainWindow):
         finally:
             combo.blockSignals(False)
 
-
     def _memory_enabled_changed(self, checked: bool) -> None:
         self.cfg.memory.enabled = bool(checked)
         save_config(self.app_dir, self.cfg)
@@ -4988,7 +4981,6 @@ class MainWindow(QtWidgets.QMainWindow):
         except (TypeError, ValueError):
             return None
 
-    @staticmethod
     def _voice_turn_from_payload(payload: dict[str, Any] | None) -> int | None:
         if not isinstance(payload, dict):
             return None
@@ -4998,7 +4990,6 @@ class MainWindow(QtWidgets.QMainWindow):
         except (TypeError, ValueError):
             return None
 
-    @staticmethod
     def _voice_capture_generation_from_payload(payload: dict[str, Any] | None) -> int | None:
         if not isinstance(payload, dict):
             return None
@@ -5136,7 +5127,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._auto_connect_wizpr()
 
     def _toggle_listen(self) -> None:
-        # Legacy button mappings now route to the real ring connection control.
+        # Legacy button mappings now route to the real ring connection control. Previous layer issue
         self._handle_mic_button()
 
     async def _toggle_ring_lock_from_button(self) -> None:
@@ -5338,7 +5329,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         return bool(self.cfg.transcription.require_wake_word)
 
-    @staticmethod
     def _target_always_requires_wake_phrase(target: str) -> bool:
         return target in {"codex", "opencode", "clipboard", "paste"}
 
@@ -5398,7 +5388,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         seen.add(alias_key)
         return out
 
-    @staticmethod
     def _strip_wake_phrase(text: str, phrase: str) -> str:
         words = phrase.strip().split()
         if not words:
@@ -5415,7 +5404,6 @@ class MainWindow(QtWidgets.QMainWindow):
         phrase = (self._wake_phrases_for_target(target) or [defaults.get(target, "Wizpr")])[0]
         return f"[voice ignored] Say '{phrase}' first to send this transcript automatically: {transcript}\n"
 
-    @staticmethod
     def _voice_command_signature(target: str, command: str) -> tuple[str, str]:
         norm = re.sub(r"[^a-z0-9']+", " ", command.casefold())
         norm = " ".join(norm.split())
@@ -5492,7 +5480,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
-    @staticmethod
     def _desktop_voice_command_needs_review(command: str) -> bool:
         text = " ".join(command.strip().split())
         if not text:
@@ -5501,7 +5488,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         return bool(CODING_VOICE_REVIEW_APP_RE.search(text) and re.search(r"\b(?:open|launch|start|run|click|press|type|paste|copy)\b", text, flags=re.IGNORECASE))
 
-    @staticmethod
     def _coding_voice_command_needs_review(command: str) -> bool:
         return MainWindow._desktop_voice_command_needs_review(command)
 
@@ -5865,7 +5851,6 @@ class MainWindow(QtWidgets.QMainWindow):
         output.setTextCursor(cursor)
         output.ensureCursorVisible()
 
-    @staticmethod
     def _next_spoken_chunk(buffer: str, force: bool = False) -> tuple[str, str]:
         text = buffer.lstrip()
         if not text:
