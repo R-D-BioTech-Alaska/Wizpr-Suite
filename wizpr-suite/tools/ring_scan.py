@@ -6,7 +6,6 @@ from datetime import datetime
 
 from ..ble.ble_manager import BLEManager, DiscoveredDevice
 
-
 def _format_device(dev: DiscoveredDevice) -> str:
     parts = [
         f"{dev.candidate_label:24}",
@@ -21,7 +20,6 @@ def _format_device(dev: DiscoveredDevice) -> str:
     if dev.service_data:
         parts.append(f"service_data={dev.service_data}")
     return " ".join(parts)
-
 
 async def _run_scan(seconds: float, chunk_seconds: float) -> int:
     manager = BLEManager()
@@ -81,7 +79,6 @@ async def _run_scan(seconds: float, chunk_seconds: float) -> int:
     print("Run ble_watch if you want a raw all-device capture for whatever changes exactly when the ring is used.")
     return 2
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Guided WIZPR Ring BLE discovery scan.")
     parser.add_argument("--seconds", type=float, default=90.0, help="Total scan time.")
@@ -93,7 +90,6 @@ def main() -> None:
     except KeyboardInterrupt:
         code = 130
     raise SystemExit(code)
-
 
 if __name__ == "__main__":
     main()
