@@ -9,14 +9,11 @@ from pathlib import Path
 
 from .config import CodexConfig
 
-
-@dataclass
 class CodexRunResult:
     ok: bool
     output: str
     error: str = ""
     executable: str = ""
-
 
 def detect_codex_executable() -> str:
     env_path = os.environ.get("WIZPR_CODEX_EXE", "").strip()
@@ -37,7 +34,6 @@ def detect_codex_executable() -> str:
     candidates = [p for p in candidates if p.exists()]
     candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return str(candidates[0]) if candidates else ""
-
 
 async def run_codex_prompt(prompt: str, cfg: CodexConfig, default_cwd: Path) -> CodexRunResult:
     executable = cfg.executable.strip() or detect_codex_executable()
