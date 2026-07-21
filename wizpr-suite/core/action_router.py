@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from typing import Any, Callable, Awaitable, Dict
 
-
 ActionHandler = Callable[[dict[str, Any]], Awaitable[None]]
-
 
 class ActionRouter:
     def __init__(self) -> None:
