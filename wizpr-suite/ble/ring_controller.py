@@ -5,13 +5,13 @@ import json
 import math
 import time
 import wave
+
 from array import array
 from collections.abc import Coroutine
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
-
 from ..core.event_bus import EventBus
 from ..core.logging_setup import get_logger
 from .ble_manager import BLEManager
@@ -219,26 +219,20 @@ _WIZPR_BATTERY_VOLTAGE_TABLE = (
     (2.900, 0),
 )
 
-
-@dataclass
 class RingProfile:
     address: str = ""
 
-
-@dataclass
 class WizprChannels:
     command: str = ""
     audio: str = ""
     mic_state: str = ""
     notify_fallback: list[str] = field(default_factory=list)
 
-
 def parse_battery_update(text: str) -> tuple[float, int] | None:
     voltage = _parse_battery_voltage(text)
     if voltage is None:
         return None
     return voltage, battery_voltage_to_percent(voltage)
-
 
 def click_topic_for_count(count: int) -> str:
     return {
@@ -248,7 +242,6 @@ def click_topic_for_count(count: int) -> str:
         4: "button_quad",
         5: "button_five",
     }.get(count, "button_multi")
-
 
 def battery_voltage_to_percent(voltage: float) -> int:
     if voltage <= 0.0:
@@ -273,7 +266,6 @@ def battery_voltage_to_percent(voltage: float) -> int:
 
     return 50
 
-
 def _parse_battery_voltage(text: str) -> float | None:
     if "BATT=" in text:
         _, tail = text.split("BATT=", 1)
@@ -290,7 +282,6 @@ def _parse_battery_voltage(text: str) -> float | None:
 
     return None
 
-
 def _parse_float_prefix(text: str) -> float | None:
     value = text.strip()
     end = 0
@@ -306,13 +297,10 @@ def _parse_float_prefix(text: str) -> float | None:
     except ValueError:
         return None
 
-
-@dataclass
 class RingAudioSnapshot:
     packets: list[bytes]
     started_at: str
     capture_serial: int
-
 
 def _pcm_activity_metrics(pcm: bytes, sample_rate: int = WIZPR_AUDIO_SAMPLE_RATE) -> dict[str, float]:
     if not pcm or sample_rate <= 0:
@@ -378,7 +366,6 @@ def _pcm_activity_metrics(pcm: bytes, sample_rate: int = WIZPR_AUDIO_SAMPLE_RATE
         "active_ratio": active_count / float(len(active)) if active else 0.0,
     }
 
-
 def _metrics_have_speech(metrics: dict[str, float]) -> bool:
     duration = float(metrics.get("duration_seconds", 0.0))
     rms = float(metrics.get("rms", 0.0))
@@ -391,7 +378,6 @@ def _metrics_have_speech(metrics: dict[str, float]) -> bool:
     if active_run >= 0.10 and active >= 0.14 and active_ratio >= 0.08:
         return True
     return rms >= 0.0030 and peak >= 0.015 and active >= 0.10
-
 
 class RingAudioCapture:
     def __init__(
@@ -417,7 +403,6 @@ class RingAudioCapture:
         if self.active and packet:
             self._packets.append(bytes(packet))
 
-    @property
     def packet_count(self) -> int:
         return len(self._packets)
 
@@ -567,7 +552,6 @@ class RingAudioCapture:
         stats["decoded_packets"] = len(audio_packets)
         return b"".join(chunks), stats
 
-    @staticmethod
     def _normalize_sequenced_packets(
         packets: list[bytes],
         prefix_len: int,
@@ -613,7 +597,6 @@ class RingAudioCapture:
             "decoded_packets": len(normalized),
         }
 
-    @staticmethod
     def _decode_wizpr_ima_packet(packet: bytes, last: int, step_index: int) -> tuple[bytes, int, int]:
         pcm = bytearray(len(packet) * 4)
         out = 0
@@ -635,7 +618,6 @@ class RingAudioCapture:
                 out += 2
         return bytes(pcm), last, step_index
 
-    @staticmethod
     def _sequence_prefix_len(packets: list[bytes]) -> int:
         candidates = [packet for packet in packets if len(packet) > 8]
         if len(candidates) < 6:
@@ -649,7 +631,6 @@ class RingAudioCapture:
             return 2
         return 0
 
-    @staticmethod
     def _looks_like_text_packet(packet: bytes) -> bool:
         if len(packet) > 96:
             return False
@@ -1318,18 +1299,15 @@ class RingController:
         elif text in ("long", "button_long", "hold"):
             self._spawn(self.bus.publish("button_long", {"uuid": char_uuid, "text": text}))
 
-    @staticmethod
     def _decode_text(data: bytearray) -> str:
         return bytes(data).decode("utf-8", errors="replace").strip()
 
-    @staticmethod
     def _looks_like_text(text: str, data: bytearray) -> bool:
         if not text or "\ufffd" in text:
             return False
         printable = sum(1 for ch in text if ch.isprintable() or ch.isspace())
         return printable / max(len(text), 1) > 0.85 and len(data) <= 96
 
-    @staticmethod
     def _sender_uuid(sender: int) -> str:
         return str(getattr(sender, "uuid", sender))
 
