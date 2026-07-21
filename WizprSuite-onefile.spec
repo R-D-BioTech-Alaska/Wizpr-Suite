@@ -2,7 +2,6 @@ from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs, copy_metadata
 
-
 root = Path(SPEC).resolve().parent
 
 datas = [
