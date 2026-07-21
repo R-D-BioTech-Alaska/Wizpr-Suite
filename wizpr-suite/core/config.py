@@ -48,28 +48,21 @@ BUTTON_MODE_MAPPINGS = {
     },
 }
 
-@dataclass
 class OpenAIConfig:
     api_key: str = ""
     model: str = "gpt-4o-mini"
     transcription_model: str = "gpt-4o-transcribe"
     base_url: str = ""  # optional
 
-
-@dataclass
 class OllamaConfig:
     base_url: str = "http://127.0.0.1:11434"
     model: str = "llama3.1:8b"
 
-
-@dataclass
 class OpenAICompatConfig:
     base_url: str = "http://127.0.0.1:8080"
     api_key: str = ""
     model: str = ""
 
-
-@dataclass
 class CodexConfig:
     executable: str = ""
     model: str = ""
@@ -77,8 +70,6 @@ class CodexConfig:
     sandbox: str = "workspace-write"
     timeout_seconds: float = 300.0
 
-
-@dataclass
 class OpenCodeConfig:
     executable: str = ""
     model: str = "ollama/qwen36-27b"
@@ -87,8 +78,6 @@ class OpenCodeConfig:
     continue_session: bool = True
     auto_approve: bool = False
 
-
-@dataclass
 class TranscriptionConfig:
     voice_pipeline_version: int = 8
     stt_backend: str = "auto"
@@ -120,21 +109,15 @@ class TranscriptionConfig:
     audio_preflight_min_rms: float = 0.0012
     audio_preflight_min_active_seconds: float = 0.12
 
-
-@dataclass
 class MemoryConfig:
     enabled: bool = True
     max_recent_turns: int = 12
     max_context_characters: int = 12000
     max_saved_turns: int = 200
 
-
-@dataclass
 class ToolConfig:
     permission_mode: str = "ask"
 
-
-@dataclass
 class MobileBridgeConfig:
     enabled: bool = False
     host: str = "127.0.0.1"
@@ -142,8 +125,6 @@ class MobileBridgeConfig:
     token: str = ""
     require_approval: bool = True
 
-
-@dataclass
 class AppConfig:
     theme: str = "dark"  # dark/light
     show_advanced_options: bool = False
@@ -172,13 +153,11 @@ class AppConfig:
         for action in DEFAULT_MAPPINGS:
             self.mappings.setdefault(action, [])
 
-
 def get_default_app_dir() -> Path:
     appdata = os.environ.get("APPDATA")
     if appdata:
         return Path(appdata) / APP_NAME
     return Path.home() / f".{APP_NAME.lower()}"
-
 
 def load_config(app_dir: Path) -> AppConfig:
     path = app_dir / CONFIG_FILE
@@ -330,7 +309,6 @@ def _infer_button_mode(mappings: dict[str, list[str]]) -> str:
         return "coding"
     return "custom"
 
-
 def _sync_button_mode_mappings(cfg: AppConfig) -> None:
     mode = (cfg.button_mode or "app").strip().lower()
     preset = BUTTON_MODE_MAPPINGS.get(mode)
@@ -351,7 +329,6 @@ def _sync_button_mode_mappings(cfg: AppConfig) -> None:
     cfg.button_mode = mode
     cfg.mappings = mappings
 
-
 def _sync_ring_voice_mappings(cfg: AppConfig) -> None:
     mappings = cfg.mappings or {}
     actions = {
@@ -367,7 +344,6 @@ def _sync_ring_voice_mappings(cfg: AppConfig) -> None:
         mappings[action] = [topic for topic in mappings[action] if topic != "audio_capture"]
     mappings[actions.get(cfg.ring_voice_target, "send_audio_to_assistant")].append("audio_capture")
     cfg.mappings = mappings
-
 
 def save_config(app_dir: Path, cfg: AppConfig) -> None:
     app_dir.mkdir(parents=True, exist_ok=True)
