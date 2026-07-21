@@ -5,15 +5,13 @@ import multiprocessing
 import os
 import sys
 import tempfile
+
 from pathlib import Path
 from typing import BinaryIO
-
 from ..core.config import get_default_app_dir
 from ..core.logging_setup import get_logger, setup_logging
 
-
 logger = get_logger("wizpr_suite")
-
 
 def _run_self_test() -> int | None:
     if "--self-test" not in sys.argv:
@@ -75,7 +73,6 @@ def _run_self_test() -> int | None:
     report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return 0
 
-
 def _run_transcription_worker() -> bool:
     if len(sys.argv) < 2 or sys.argv[1] != "--local-transcribe-worker":
         return False
@@ -84,7 +81,6 @@ def _run_transcription_worker() -> bool:
 
     worker_main()
     return True
-
 
 def _acquire_single_instance_lock(app_dir: Path) -> BinaryIO | None:
     app_dir.mkdir(parents=True, exist_ok=True)
@@ -101,7 +97,6 @@ def _acquire_single_instance_lock(app_dir: Path) -> BinaryIO | None:
         return None
     return handle
 
-
 def _release_single_instance_lock(handle: BinaryIO | None) -> None:
     if handle is None:
         return
@@ -115,7 +110,6 @@ def _release_single_instance_lock(handle: BinaryIO | None) -> None:
         pass
     finally:
         handle.close()
-
 
 def main() -> int:
     multiprocessing.freeze_support()
@@ -152,7 +146,6 @@ def main() -> int:
         return app.exec()
     finally:
         _release_single_instance_lock(lock)
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
