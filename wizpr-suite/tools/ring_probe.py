@@ -7,11 +7,9 @@ from ..ble.ble_manager import BLEManager, DiscoveredDevice
 from ..ble.ring_controller import RingController, RingProfile, WIZPR_DEVICE_NAME_PREFIX
 from ..core.event_bus import EventBus
 
-
 def _show_device(prefix: str, dev: DiscoveredDevice) -> None:
     services = ", ".join(dev.service_uuids or []) or "-"
     print(f"{prefix}: {dev.candidate_label} {dev.name or '(no name)'} [{dev.address}] services={services}")
-
 
 async def _select_device(ble: BLEManager, address: str, scan_seconds: float) -> DiscoveredDevice | None:
     if address:
@@ -52,14 +50,12 @@ async def _select_device(ble: BLEManager, address: str, scan_seconds: float) -> 
 
     return next((d for d in seen.values() if d.candidate_label == "WIZPR ring"), None)
 
-
 async def _show_ble_health_gate(ble: BLEManager, ignore_adapter_gate: bool) -> bool:
     report = await ble.health_report()
     print(BLEManager.format_health_report(report))
     if ignore_adapter_gate:
         return True
     return report.get("adapter_has_ble_central") is not False
-
 
 async def main_async(address: str, scan_seconds: float, listen_seconds: float, ignore_adapter_gate: bool) -> int:
     ble = BLEManager()
@@ -125,7 +121,6 @@ async def main_async(address: str, scan_seconds: float, listen_seconds: float, i
         except Exception:
             pass
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Connect to a WIZPR Ring and print BLE events.")
     parser.add_argument("--address", default="", help="Known BLE address, e.g. 28:76:81:FA:97:22.")
@@ -134,7 +129,6 @@ def main() -> None:
     parser.add_argument("--ignore-adapter-gate", action="store_true", help="Try anyway even if Windows says BLE Central is unavailable.")
     args = parser.parse_args()
     raise SystemExit(asyncio.run(main_async(args.address, args.scan_seconds, args.listen_seconds, args.ignore_adapter_gate)))
-
 
 if __name__ == "__main__":
     main()
