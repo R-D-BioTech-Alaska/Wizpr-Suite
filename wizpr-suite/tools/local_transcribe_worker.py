@@ -8,23 +8,19 @@ from pathlib import Path
 
 from ..core.local_transcription import _default_compute_type, _default_model_name, _get_model, _transcribe_sync
 
-
 def _error_message(exc: BaseException) -> str:
     if isinstance(exc, RuntimeError):
         return str(exc)
     return f"{type(exc).__name__}: {exc}"
 
-
 def _write(payload: dict[str, object]) -> None:
     sys.stdout.write(json.dumps(payload, ensure_ascii=False) + "\n")
     sys.stdout.flush()
-
 
 def _finish(payload: dict[str, object], code: int) -> None:
     _write(payload)
     sys.stderr.flush()
     os._exit(code)
-
 
 def _serve(model_name: str, compute_type: str) -> None:
     try:
@@ -53,7 +49,6 @@ def _serve(model_name: str, compute_type: str) -> None:
             _write({"id": request_id, "text": text, "error": ""})
 
     os._exit(0)
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Transcribe an audio file with local faster-whisper.")
@@ -84,7 +79,6 @@ def main() -> None:
     if not text:
         _finish({"text": "", "error": "Local transcription returned no text."}, 1)
     _finish({"text": text, "error": ""}, 0)
-
 
 if __name__ == "__main__":
     main()
