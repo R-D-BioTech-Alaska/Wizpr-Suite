@@ -5,10 +5,8 @@ from pathlib import Path
 
 _LOGGER_NAME = "wizpr_suite"
 
-
 def get_logger(name: str | None = None) -> logging.Logger:
     return logging.getLogger(_LOGGER_NAME if name is None else name)
-
 
 def setup_logging(app_dir: Path, level: int = logging.INFO) -> None:
     app_dir.mkdir(parents=True, exist_ok=True)
