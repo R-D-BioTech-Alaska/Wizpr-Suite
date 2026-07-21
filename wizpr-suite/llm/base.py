@@ -4,12 +4,9 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-
-@dataclass
 class LLMResponse:
     text: str
     raw: Any = None
-
 
 class LLMProvider(Protocol):
     id: str
