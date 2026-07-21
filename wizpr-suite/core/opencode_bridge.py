@@ -4,19 +4,16 @@ import asyncio
 import os
 import re
 import shutil
+
 from dataclasses import dataclass
 from pathlib import Path
-
 from .config import OpenCodeConfig
 
-
-@dataclass
 class OpenCodeRunResult:
     ok: bool
     output: str
     error: str = ""
     executable: str = ""
-
 
 def detect_opencode_executable() -> str:
     env_path = os.environ.get("WIZPR_OPENCODE_EXE", "").strip()
@@ -37,7 +34,6 @@ def detect_opencode_executable() -> str:
                 return str(candidate)
 
     return ""
-
 
 async def list_opencode_models(executable: str = "") -> tuple[list[str], str]:
     exe = executable.strip() or detect_opencode_executable()
@@ -63,7 +59,6 @@ async def list_opencode_models(executable: str = "") -> tuple[list[str], str]:
     models = sort_opencode_models(_parse_model_lines(stdout))
     return models, ""
 
-
 def _parse_model_lines(stdout: str) -> list[str]:
     out: list[str] = []
     seen: set[str] = set()
@@ -79,10 +74,8 @@ def _parse_model_lines(stdout: str) -> list[str]:
                 out.append(model)
     return out
 
-
 def sort_opencode_models(models: list[str]) -> list[str]:
     return sorted(set(models), key=_opencode_model_sort_key)
-
 
 def _opencode_model_sort_key(model: str) -> tuple[int, str]:
     text = model.casefold()
@@ -96,7 +89,6 @@ def _opencode_model_sort_key(model: str) -> tuple[int, str]:
     if "qwen36-27b" in text:
         score -= 10
     return score, text
-
 
 async def run_opencode_prompt(prompt: str, cfg: OpenCodeConfig, default_cwd: Path) -> OpenCodeRunResult:
     executable = cfg.executable.strip() or detect_opencode_executable()
