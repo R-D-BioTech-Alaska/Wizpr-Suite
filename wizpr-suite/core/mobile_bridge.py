@@ -5,9 +5,9 @@ import ipaddress
 import secrets
 import socket
 import time
+
 from typing import Any, Awaitable, Callable
 from urllib.parse import quote
-
 from .config import DEFAULT_MAPPINGS, MobileBridgeConfig
 from .event_bus import EventBus
 
@@ -58,7 +58,6 @@ BRIDGE_COMMAND_EXAMPLES = [
     {"target": "clipboard", "text": "Copy this text"},
     {"target": "paste", "text": "Voice keyboard text"},
 ]
-
 
 def bridge_page_html() -> str:
     return """<!doctype html>
@@ -249,10 +248,8 @@ connectEvents();
 </body>
 </html>"""
 
-
 def make_bridge_token() -> str:
     return secrets.token_urlsafe(24)
-
 
 def bridge_url(cfg: MobileBridgeConfig, local_hosts: list[str] | None = None) -> str:
     host = (cfg.host or "127.0.0.1").strip()
@@ -267,7 +264,6 @@ def bridge_url(cfg: MobileBridgeConfig, local_hosts: list[str] | None = None) ->
         shown_host = f"[{shown_host}]"
     return f"http://{shown_host}:{port}"
 
-
 def bridge_app_url(
     cfg: MobileBridgeConfig,
     *,
@@ -280,15 +276,12 @@ def bridge_app_url(
         url += f"?token={quote(token, safe='')}"
     return url
 
-
 def bridge_needs_token(cfg: MobileBridgeConfig) -> bool:
     host = (cfg.host or "").strip().lower()
     return host not in {"", "127.0.0.1", "localhost", "::1"}
 
-
 def _is_bind_all_host(host: str) -> bool:
     return (host or "").strip().strip("[]").lower() in {"0.0.0.0", "::"}
-
 
 def _bridge_lan_hosts(local_hosts: list[str] | None = None) -> list[str]:
     candidates = local_hosts if local_hosts is not None else _detect_bridge_lan_hosts()
@@ -298,7 +291,6 @@ def _bridge_lan_hosts(local_hosts: list[str] | None = None) -> list[str]:
         if host and host not in out and _is_reachable_client_host(host):
             out.append(host)
     return out
-
 
 def _detect_bridge_lan_hosts() -> list[str]:
     out: list[str] = []
@@ -323,14 +315,12 @@ def _detect_bridge_lan_hosts() -> list[str]:
 
     return out
 
-
 def _is_reachable_client_host(host: str) -> bool:
     try:
         ip = ipaddress.ip_address(host)
     except ValueError:
         return True
     return not (ip.is_loopback or ip.is_link_local or ip.is_unspecified or ip.is_multicast)
-
 
 class MobileBridge:
     def __init__(
@@ -351,7 +341,6 @@ class MobileBridge:
         self._task: asyncio.Task[Any] | None = None
         self._websockets: set[Any] = set()
 
-    @property
     def running(self) -> bool:
         return self._task is not None and not self._task.done()
 
