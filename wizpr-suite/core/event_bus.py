@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from typing import Awaitable, Callable, Any, DefaultDict
 from collections import defaultdict
-
 from .logging_setup import get_logger
 
 Handler = Callable[[Any], Awaitable[None]]
