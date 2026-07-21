@@ -5,11 +5,9 @@ import asyncio
 
 from ..ble.ble_manager import BLEManager, DiscoveredDevice
 
-
 def _show_device(prefix: str, dev: DiscoveredDevice) -> None:
     services = ", ".join(dev.service_uuids or []) or "-"
     print(f"{prefix}: {dev.candidate_label} {dev.name or '(no name)'} [{dev.address}] services={services}")
-
 
 async def main_async(show_all: bool, turn_on_radio: bool) -> int:
     ble = BLEManager()
@@ -36,14 +34,12 @@ async def main_async(show_all: bool, turn_on_radio: bool) -> int:
         return 2
     return 0
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Check whether Windows can expose BLE Central/GATT for WIZPR Ring.")
     parser.add_argument("--all", action="store_true", help="Print every Windows-associated/cached BLE device.")
     parser.add_argument("--turn-on-radio", action="store_true", help="Ask Windows to turn on the Bluetooth radio before testing.")
     args = parser.parse_args()
     raise SystemExit(asyncio.run(main_async(show_all=args.all, turn_on_radio=args.turn_on_radio)))
-
 
 if __name__ == "__main__":
     main()
