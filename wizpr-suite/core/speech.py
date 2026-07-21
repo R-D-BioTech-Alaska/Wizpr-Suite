@@ -15,6 +15,7 @@ _VOICE_PREFERENCE = (
     "Microsoft David",
 )
 
+# This is currently being overhauled for ai voice sampling as opposed to old microsoft voices..
 
 def text_for_speech(text: str, max_chars: int = 1400) -> str:
     cleaned = text.strip()
@@ -66,7 +67,6 @@ def text_for_speech(text: str, max_chars: int = 1400) -> str:
 
     clipped = cleaned[:max_chars].rsplit(" ", 1)[0].strip()
     return clipped + "."
-
 
 async def speak_text(text: str, voice: str = "", rate: int = 0) -> tuple[bool, str]:
     if os.name != "nt":
@@ -134,7 +134,6 @@ async def speak_text(text: str, voice: str = "", rate: int = 0) -> tuple[bool, s
         raise
     except Exception as exc:
         return False, str(exc)
-
 
 async def play_feedback_sound(kind: str) -> tuple[bool, str]:
     if os.name != "nt":
