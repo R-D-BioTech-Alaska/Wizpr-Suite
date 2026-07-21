@@ -10,11 +10,9 @@ from ..ble.ring_controller import WIZPR_SERVICE_UUID
 WIZPR_CASE_SERVICE_UUID = "00000000-dc2e-4362-93d3-df429eb3ad11"
 WIZPR_CASE_EVENT_CHAR_UUID = "00000008-dc2e-4362-93d3-df429eb3ad11"
 
-
 def _show_device(prefix: str, dev: DiscoveredDevice) -> None:
     services = ", ".join(dev.service_uuids or []) or "-"
     print(f"{prefix}: {dev.candidate_label} {dev.name or '(no name)'} [{dev.address}] services={services}")
-
 
 def _value_preview(data: bytes, limit: int = 80) -> str:
     hex_value = data[:limit].hex()
@@ -25,10 +23,8 @@ def _value_preview(data: bytes, limit: int = 80) -> str:
         text += "..."
     return f"hex={hex_value or '-'} ascii={text or '-'}"
 
-
 def _decode_text(data: bytes) -> str:
     return data.rstrip(b"\x00").decode("utf-8", errors="replace").strip()
-
 
 async def _select_case(ble: BLEManager, address: str, scan_seconds: float) -> DiscoveredDevice | None:
     if address:
@@ -68,7 +64,6 @@ async def _select_case(ble: BLEManager, address: str, scan_seconds: float) -> Di
         await asyncio.sleep(min(1.0, deadline - loop.time()))
 
     return next((d for d in seen.values() if d.candidate_label == "WIZPR case"), None)
-
 
 async def main_async(
     address: str,
@@ -172,7 +167,6 @@ async def main_async(
             await ble.disconnect()
         except Exception:
             pass
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Passively inspect a WIZPR charging case BLE peripheral.")
