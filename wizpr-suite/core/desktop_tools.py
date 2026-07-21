@@ -5,9 +5,9 @@ import os
 import re
 import subprocess
 import webbrowser
+
 from dataclasses import dataclass
 from pathlib import Path
-
 
 @dataclass(frozen=True)
 class DesktopToolRequest:
@@ -16,9 +16,7 @@ class DesktopToolRequest:
     original: str
     target: str = ""
 
-
 _OPEN_RE = re.compile(r"\b(?:open|launch|start)\b", re.IGNORECASE)
-
 
 def parse_desktop_tool_request(text: str) -> DesktopToolRequest | None:
     command = " ".join((text or "").strip().split())
@@ -45,7 +43,6 @@ def parse_desktop_tool_request(text: str) -> DesktopToolRequest | None:
         if any(alias in lowered for alias in aliases):
             return DesktopToolRequest(tool=tool, label=label, original=command, target=target[0] if target else "")
     return None
-
 
 async def execute_desktop_tool(request: DesktopToolRequest) -> tuple[bool, str]:
     if os.name != "nt":
