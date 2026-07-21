@@ -5,10 +5,8 @@ from collections import defaultdict
 
 from .logging_setup import get_logger
 
-
 Handler = Callable[[Any], Awaitable[None]]
 logger = get_logger("wizpr_suite.events")
-
 
 class EventBus:
     def __init__(self) -> None:
