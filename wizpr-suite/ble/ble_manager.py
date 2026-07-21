@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 import re
+
 from collections import defaultdict
 from dataclasses import dataclass
 from types import SimpleNamespace
@@ -42,8 +43,6 @@ WIZPR_RELATED_LABELS = {WIZPR_RING_LABEL, "WIZPR case", "WIZPR BLE client"}
 WIZPR_SILABS_OUI = "28:76:81"
 WIZPR_IOTBT_SERVICE_UUID = "00005a00-0000-1000-8000-00805f9b34fb"
 
-
-@dataclass
 class DiscoveredDevice:
     address: str
     name: str
@@ -53,7 +52,6 @@ class DiscoveredDevice:
     manufacturer_data: dict[str, str] | None = None
     service_data: dict[str, str] | None = None
 
-    @property
     def candidate_label(self) -> str:
         raw_name = (self.name or "").strip().casefold()
         name_norm = BLEManager._norm(self.name)
@@ -91,14 +89,12 @@ class DiscoveredDevice:
             return "Unknown beacon"
         return "Unknown"
 
-    @staticmethod
     def _name_looks_like_wizpr_ring(name_norm: str) -> bool:
         if "case" in name_norm:
             return False
         if "ring" in name_norm and ("wizpr" in name_norm or "wzpr" in name_norm or "whsp" in name_norm):
             return True
         return name_norm.startswith("wizpr ring") or name_norm.startswith("wzpr ring") or name_norm.startswith("whsp ring")
-
 
 class BLEManager:
     def __init__(self) -> None:
@@ -248,7 +244,6 @@ class BLEManager:
             "known_devices": known,
         }
 
-    @staticmethod
     def format_health_report(report: dict[str, Any]) -> str:
         lines: list[str] = ["ble_doctor:"]
         adapter = report.get("adapter", {})
@@ -327,7 +322,6 @@ class BLEManager:
             lines.append("  verdict: BLE adapter looks usable, but no WIZPR ring is known yet.")
         return "\n".join(lines)
 
-    @staticmethod
     def format_radio_repair_result(result: dict[str, Any]) -> str:
         lines = ["bluetooth_radio_repair:"]
         if not result.get("available"):
@@ -481,7 +475,6 @@ class BLEManager:
         self._devices[address] = device
         self._advertisements[address] = adv
 
-    @staticmethod
     def _to_discovered_device(addr: str, dev: BLEDevice, adv: AdvertisementData) -> DiscoveredDevice:
         name = (adv.local_name or dev.name or "").strip()
         rssi = int(getattr(adv, "rssi", 0) or 0)
@@ -600,7 +593,6 @@ class BLEManager:
         finally:
             await scanner.stop()
 
-    @staticmethod
     def _filter_wizpr_related(devices: list[DiscoveredDevice], include_reverse_ble: bool) -> list[DiscoveredDevice]:
         if include_reverse_ble:
             return [d for d in devices if d.candidate_label in WIZPR_RELATED_LABELS]
@@ -713,15 +705,12 @@ class BLEManager:
             except Exception:
                 logger.exception("BLE disconnect callback failed")
 
-    @property
     def client(self) -> BleakClient | None:
         return self._client
 
-    @staticmethod
     def _norm(value: str) -> str:
         return value.casefold().replace("_", " ").replace("-", " ").strip()
 
-    @classmethod
     def _matches_name_prefix(cls, device: DiscoveredDevice, prefix_norm: str) -> bool:
         name_norm = cls._norm(device.name)
         service_uuids = {u.casefold() for u in (device.service_uuids or [])}
@@ -735,7 +724,6 @@ class BLEManager:
             )
         return name_norm.startswith(prefix_norm)
 
-    @staticmethod
     def _device_sort_key(device: DiscoveredDevice) -> tuple[int, int, str, str]:
         label_rank = {
             WIZPR_RING_LABEL: 0,
@@ -745,33 +733,28 @@ class BLEManager:
         }.get(device.candidate_label, 4)
         return (label_rank, -int(device.rssi or 0), device.name.casefold(), device.address)
 
-    @staticmethod
     def _format_address(addr_hex: str) -> str:
         clean = re.sub(r"[^0-9a-fA-F]", "", addr_hex).upper()
         return ":".join(clean[i : i + 2] for i in range(0, 12, 2))
 
-    @classmethod
     def _normalize_address(cls, address: str) -> str:
         clean = re.sub(r"[^0-9a-fA-F]", "", address)
         if len(clean) == 12:
             return cls._format_address(clean)
         return address.strip()
 
-    @classmethod
     def _address_to_int(cls, address: str) -> int:
         clean = re.sub(r"[^0-9a-fA-F]", "", address)
         if len(clean) != 12:
             raise ValueError(f"Invalid BLE address: {address}")
         return int(clean, 16)
 
-    @classmethod
     def _winrt_cached_device(cls, address: str, name: str | None = None) -> BLEDevice:
         if RawAdvData is None:
             raise RuntimeError("Windows BLE backend is unavailable")
         details = RawAdvData(SimpleNamespace(bluetooth_address=cls._address_to_int(address)), None)
         return BLEDevice(cls._normalize_address(address), name, details)
 
-    @classmethod
     def _address_from_device_information_id(cls, device_id: str) -> str:
         match = re.search(r"-([0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5})(?:$|[\\#])", device_id)
         if match:
@@ -781,19 +764,16 @@ class BLEManager:
             return cls._format_address(match.group(1))
         return ""
 
-    @classmethod
     def _looks_relevant_name(cls, name: str) -> bool:
         norm = cls._norm(name)
         return any(token in norm for token in ("wizpr", "wzpr", "whsp", "ring", "iotbt"))
 
-    @staticmethod
     def _enum_int(value: object) -> int | None:
         try:
             return int(value)  # WinRT enums behave like ints, but keep this defensive.
         except Exception:
             return None
 
-    @staticmethod
     def _radio_state_name(value: int | None) -> str:
         return {
             0: "unknown",
@@ -802,7 +782,6 @@ class BLEManager:
             3: "disabled",
         }.get(value, str(value or "unknown"))
 
-    @classmethod
     def _bluetooth_radio_on(cls, radio: dict[str, Any]) -> bool | None:
         if not isinstance(radio, dict) or not radio.get("available"):
             return None
@@ -811,7 +790,6 @@ class BLEManager:
             return None
         return any(item.get("state_name") == "on" for item in bluetooth_radios)
 
-    @classmethod
     def _scanner_start_error(cls, exc: Exception, repair: dict[str, Any] | None = None) -> RuntimeError:
         repair_hint = ""
         if repair:
@@ -833,7 +811,6 @@ class BLEManager:
             f"{repair_hint}"
         )
 
-    @staticmethod
     def _registry_subkeys(path: str) -> list[str]:
         if winreg is None:
             return []
@@ -853,7 +830,6 @@ class BLEManager:
             winreg.CloseKey(key)
         return out
 
-    @classmethod
     def _registry_first_value(cls, path: str, value_name: str) -> object | None:
         if winreg is None:
             return None
