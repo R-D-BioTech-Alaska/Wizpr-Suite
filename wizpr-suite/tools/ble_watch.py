@@ -3,17 +3,15 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
-
 from ..ble.ble_manager import BLEManager, DiscoveredDevice, WIZPR_REVERSE_BLE_SCAN_SERVICE_UUIDS
 from ..core.config import get_default_app_dir
-
 
 def _adv_to_device(device: BLEDevice, adv: AdvertisementData) -> DiscoveredDevice:
     address = BLEManager._normalize_address(device.address)
@@ -38,7 +36,6 @@ def _adv_to_device(device: BLEDevice, adv: AdvertisementData) -> DiscoveredDevic
         service_data=service_data,
     )
 
-
 def _device_record(dev: DiscoveredDevice) -> dict[str, Any]:
     return {
         "address": dev.address,
@@ -50,7 +47,6 @@ def _device_record(dev: DiscoveredDevice) -> dict[str, Any]:
         "service_data": dev.service_data or {},
         "tx_power": dev.tx_power,
     }
-
 
 def _format_device(dev: DiscoveredDevice) -> str:
     parts = [
@@ -67,13 +63,11 @@ def _format_device(dev: DiscoveredDevice) -> str:
         parts.append(f"service_data={dev.service_data}")
     return " ".join(parts)
 
-
 def _capture_path() -> Path:
     out_dir = get_default_app_dir() / "captures"
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     return out_dir / f"ble-watch-{stamp}.jsonl"
-
 
 async def _run(seconds: float, print_all: bool, min_rssi: int, output: Path | None, official_filters: bool) -> int:
     manager = BLEManager()
@@ -182,7 +176,6 @@ async def _run(seconds: float, print_all: bool, min_rssi: int, output: Path | No
 
     return 0 if any(item.get("label") == "WIZPR ring" for item in known) else 2
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Continuously log BLE advertisements for WIZPR Ring discovery.")
     parser.add_argument("--seconds", type=float, default=120.0, help="How long to watch.")
@@ -197,7 +190,6 @@ def main() -> None:
     except KeyboardInterrupt:
         code = 130
     raise SystemExit(code)
-
 
 if __name__ == "__main__":
     main()
