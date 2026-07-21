@@ -119,7 +119,6 @@ class OpenAICompatProvider:
         except Exception as exc:
             yield f"[Compat error] {exc}"
 
-    @staticmethod
     def _payload(prompt: str, model: str, temperature: float, stream: bool) -> dict[str, object]:
         return {
             "model": model,
