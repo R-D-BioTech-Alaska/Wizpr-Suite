@@ -30,7 +30,6 @@ class OllamaProvider:
         self._models_cache: list[str] = []
         self._models_cached_at = 0.0
 
-    @property
     def base_url(self) -> str:
         return self._base_url
 
@@ -208,7 +207,6 @@ class OllamaProvider:
     async def _probe_current(self) -> tuple[bool, str]:
         return await self._probe_base_url(self._get_client(), self._base_url, 2.0)
 
-    @staticmethod
     async def _probe_base_url(client: httpx.AsyncClient, base_url: str, timeout: float) -> tuple[bool, str]:
         try:
             response = await client.get(base_url.rstrip("/") + "/api/tags", timeout=timeout)
@@ -250,7 +248,6 @@ class OllamaProvider:
             "options": {"temperature": float(temperature)},
         }
 
-    @staticmethod
     def _keep_alive() -> str:
         return os.environ.get("WIZPR_OLLAMA_KEEP_ALIVE", "30m").strip() or "30m"
 
@@ -261,7 +258,6 @@ class OllamaProvider:
         self._base_url = base_url
         self._healthy_until = time.monotonic() + _HEALTH_CACHE_SECONDS
 
-    @classmethod
     def candidate_base_urls(cls, preferred_base_url: str = "") -> list[str]:
         out: list[str] = []
 
@@ -282,7 +278,6 @@ class OllamaProvider:
 
         return out
 
-    @classmethod
     def _expand_bind_base_url(cls, value: str) -> list[str]:
         normalized = cls.normalize_base_url(value)
         if not normalized:
@@ -303,7 +298,6 @@ class OllamaProvider:
             ]
         return [normalized]
 
-    @staticmethod
     def normalize_base_url(value: str) -> str:
         raw = (value or "").strip().strip('"').strip("'")
         if not raw:
@@ -326,7 +320,6 @@ class OllamaProvider:
         except Exception:
             return raw.rstrip("/")
 
-    @staticmethod
     @lru_cache(maxsize=1)
     def _local_host_candidates() -> tuple[str, ...]:
         out: list[str] = []
