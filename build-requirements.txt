@@ -4,5 +4,5 @@ pyinstaller-hooks-contrib==2025.2
 altgraph==0.17.4
 pefile==2023.2.7; sys_platform == "win32"
 pywin32-ctypes==0.2.3; sys_platform == "win32"
-pytest==8.4.2
+pytest==9.0.3
 ruff==0.15.22
