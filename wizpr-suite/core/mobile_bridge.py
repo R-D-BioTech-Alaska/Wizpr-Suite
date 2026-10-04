@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import ipaddress
+import logging
 import secrets
 import socket
 import time
@@ -10,6 +11,8 @@ from typing import Any, Awaitable, Callable
 from urllib.parse import quote
 from .config import DEFAULT_MAPPINGS, MobileBridgeConfig
 from .event_bus import EventBus
+
+logger = logging.getLogger(__name__)
 
 BridgeCommandHandler = Callable[[dict[str, Any]], Awaitable[dict[str, Any]]]
 BridgeStatusProvider = Callable[[], dict[str, Any]]
@@ -477,7 +480,8 @@ class MobileBridge:
                 try:
                     desktop = dict(self.status_provider())
                 except Exception as exc:
-                    desktop = {"error": str(exc)}
+                    logger.exception("Failed to get desktop status from status_provider: %s", exc)
+                    desktop = {"error": "Unable to retrieve desktop status."}
             return {
                 "ok": True,
                 "name": "Wizpr Suite",
